@@ -1,8 +1,6 @@
-#[macro_use]
-extern crate serde_derive;
-extern crate reqwest;
+use reqwest;
 use reqwest::Error;
-
+use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 struct Response {
