@@ -73,6 +73,17 @@ fn print_response(result: &mut reqwest::Response) -> Result<(), std::io::Error> 
 }
 */
 
+fn print_word_data(data: Data) {
+    let first_japanese_word = data.japanese.get(0);
+    first_japanese_word.map(|j| {
+        j.word.as_ref().map(|w| print!("{}", w));
+        print!(" | {}", j.reading)
+    });
+
+    //TODO English
+    println!()
+}
+
 fn main() -> Result<(), Error> {
     let args: Vec<String> = env::args().collect();
 
@@ -95,7 +106,7 @@ fn main() -> Result<(), Error> {
 
     if response_data.len() > 0 {
         for data in response_data {
-            println!("Slug {}", data.slug)
+            print_word_data(data);
         }
     } else {
         println!("Nothing found.")
