@@ -1,3 +1,4 @@
+use std::env;
 use reqwest;
 use reqwest::Error;
 use serde::Deserialize;
@@ -73,9 +74,16 @@ fn print_response(result: &mut reqwest::Response) -> Result<(), std::io::Error> 
 */
 
 fn main() -> Result<(), Error> {
-    let term = "dog";
+    let args: Vec<String> = env::args().collect();
 
-    println!("Searching {:?}", term);
+    if args.len() == 1 {
+        println!("Usage: rusty_jisho <search term>");
+        std::process::exit(1);
+    }
+
+    let term = &args[1];
+
+    println!("Searching '{}'", term);
 
     let query_url = &format!("http://beta.jisho.org/api/v1/search/words?keyword={}", term);
     let mut result = reqwest::get(query_url)?;
@@ -87,7 +95,7 @@ fn main() -> Result<(), Error> {
 
     if response_data.len() > 0 {
         for data in response_data {
-            println!("Slug {:?}", data.slug)
+            println!("Slug {}", data.slug)
         }
     } else {
         println!("Nothing found.")
