@@ -53,7 +53,14 @@ struct Link {
 struct Attribution {
     jmdict: bool,
     jmnedict: bool,
-//    dbpedia: bool //TODO can be bool or String
+//    dbpedia: DBPedia
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(untagged)]
+enum DBPedia {
+    Bool,
+    String
 }
 
 /*
@@ -66,7 +73,11 @@ fn print_response(result: &mut reqwest::Response) -> Result<(), std::io::Error> 
 */
 
 fn main() -> Result<(), Error> {
-    let query_url = "http://beta.jisho.org/api/v1/search/words?keyword=dog";
+    let term = "dog";
+
+    println!("Searching {:?}", term);
+
+    let query_url = &format!("http://beta.jisho.org/api/v1/search/words?keyword={}", term);
     let mut result = reqwest::get(query_url)?;
 
 //    print_response(&mut result);
@@ -74,11 +85,14 @@ fn main() -> Result<(), Error> {
     let response: Response = result.json()?;
     let response_data = response.data;
 
-    match response_data.get(0) {
-        Some(d) => println!("Slug {:?}", d.slug),
-        _ => println!("Gaa!")
+    if response_data.len() > 0 {
+        for data in response_data {
+            println!("Slug {:?}", data.slug)
+        }
+    } else {
+        println!("Nothing found.")
     }
 
-    println!("\n\nThat's all!");
+
     Ok(())
 }
