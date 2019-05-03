@@ -1,3 +1,4 @@
+use std::cmp;
 use std::env;
 use reqwest;
 use reqwest::Error;
@@ -31,7 +32,7 @@ struct Word {
     reading: String
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Clone, Deserialize, Debug)]
 struct Sense {
     english_definitions: Vec<String>,
     parts_of_speech: Vec<String>,
@@ -44,7 +45,7 @@ struct Sense {
     info: Vec<String>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Clone, Deserialize, Debug)]
 struct Link {
     text: String,
     url: String
@@ -76,11 +77,26 @@ fn print_response(result: &mut reqwest::Response) -> Result<(), std::io::Error> 
 fn print_word_data(data: Data) {
     let first_japanese_word = data.japanese.get(0);
     first_japanese_word.map(|j| {
-        j.word.as_ref().map(|w| print!("{}", w));
+        match j.word.as_ref() {
+            Some(w) => print!("{}", w),
+            None => print!("--")
+        }
         print!(" | {}", j.reading)
     });
 
-    //TODO English
+    print!(" |");
+
+    let senses = data.senses;
+    let elements_to_take = cmp::min(senses.len(), 5);
+    let select_senses = senses[0..elements_to_take].to_vec();
+    for sense in select_senses {
+        let definitions_to_take = cmp::min(sense.english_definitions.len(), 5);
+        let select_definitions = sense.english_definitions[0..definitions_to_take].to_vec();
+        for definition in select_definitions {
+            print!("| {} ", definition);
+        }
+        print!("|");
+    }
     println!()
 }
 
