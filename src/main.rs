@@ -18,7 +18,7 @@ struct Meta {
 #[derive(Deserialize, Debug)]
 struct Data {
     slug: String,
-    is_common: bool,
+    is_common: Option<bool>,
     tags: Vec<String>,
     jlpt: Vec<String>,
     japanese: Vec<Word>,
@@ -29,7 +29,7 @@ struct Data {
 #[derive(Deserialize, Debug)]
 struct Word {
     word: Option<String>,
-    reading: String
+    reading: Option<String>
 }
 
 #[derive(Clone, Deserialize, Debug)]
@@ -74,14 +74,19 @@ fn print_response(result: &mut reqwest::Response) -> Result<(), std::io::Error> 
 }
 */
 
+fn print_optional(value: Option<&String>) {
+    match value {
+        Some(val) => print!("{}", val),
+        None => print!("--")
+    }
+}
+
 fn print_word_data(data: Data) {
     let first_japanese_word = data.japanese.get(0);
     first_japanese_word.map(|j| {
-        match j.word.as_ref() {
-            Some(w) => print!("{}", w),
-            None => print!("--")
-        }
-        print!(" | {}", j.reading)
+        print_optional(j.word.as_ref());
+        print!(" | ");
+        print_optional(j.reading.as_ref());
     });
 
     print!(" |");
