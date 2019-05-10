@@ -64,15 +64,6 @@ enum DBPedia {
     String(String)
 }
 
-/*
-fn print_response(result: &mut reqwest::Response) -> Result<(), std::io::Error> {
-    println!("RESULT!");
-    std::io::copy(result, &mut std::io::stdout())?;
-    println!("END RESULT!");
-    Ok(())
-}
-*/
-
 fn print_optional(value: Option<&String>) {
     match value {
         Some(val) => print!("{}", val),
@@ -116,8 +107,6 @@ fn main() -> Result<(), Error> {
     let query_url = &format!("http://beta.jisho.org/api/v1/search/words?keyword={}", term);
     let mut result = reqwest::get(query_url)?;
 
-//    print_response(&mut result);
-
     let response: Response = result.json()?;
     let response_data = response.data;
 
@@ -128,7 +117,6 @@ fn main() -> Result<(), Error> {
     } else {
         println!("Nothing found.")
     }
-
 
     Ok(())
 }
