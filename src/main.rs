@@ -54,14 +54,14 @@ struct Link {
 struct Attribution {
     jmdict: bool,
     jmnedict: bool,
-//    dbpedia: DBPedia
+    dbpedia: DBPedia
 }
 
 #[derive(Deserialize, Debug)]
 #[serde(untagged)]
 enum DBPedia {
-    Bool,
-    String
+    Bool(bool),
+    String(String)
 }
 
 /*
