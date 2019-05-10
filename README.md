@@ -12,5 +12,10 @@ Requires the Rust tooling https://www.rust-lang.org/tools/install
 
 ## Running
 
+After build:
+
     target/debug/rusty_jisho <word>
 
+Or you can just:
+
+    cargo run -- <word>
