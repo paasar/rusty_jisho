@@ -1,4 +1,3 @@
-use std::cmp;
 use std::env;
 use reqwest;
 use reqwest::Error;
@@ -91,12 +90,9 @@ fn print_word_data(data: Data) {
 
     print!(" |");
 
-    let senses = data.senses;
-    let elements_to_take = cmp::min(senses.len(), 5);
-    let select_senses = senses[0..elements_to_take].to_vec();
-    for sense in select_senses {
-        let definitions_to_take = cmp::min(sense.english_definitions.len(), 5);
-        let select_definitions = sense.english_definitions[0..definitions_to_take].to_vec();
+    let senses = data.senses.iter().take(5).collect::<Vec<_>>();
+    for sense in senses {
+        let select_definitions = sense.english_definitions.iter().take(5).collect::<Vec<_>>();
         for definition in select_definitions {
             print!("| {} ", definition);
         }
