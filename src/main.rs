@@ -2,6 +2,7 @@ use std::env;
 use reqwest;
 use reqwest::Error;
 use serde::Deserialize;
+use std::collections::HashMap;
 
 #[derive(Deserialize, Debug)]
 struct Response {
@@ -40,7 +41,7 @@ struct Sense {
     restrictions: Vec<String>,
     see_also: Vec<String>,
     antonyms: Vec<String>,
-    source: Vec<String>,
+    source: Vec<Source>,
     info: Vec<String>,
 }
 
@@ -62,6 +63,13 @@ struct Attribution {
 enum DBPedia {
     Bool(bool),
     String(String)
+}
+
+#[derive(Clone, Deserialize, Debug)]
+#[serde(untagged)]
+enum Source {
+    String(String),
+    Map(HashMap<String, String>)
 }
 
 fn print_optional(value: Option<&String>) {
@@ -104,8 +112,8 @@ fn main() -> Result<(), Error> {
 
     println!("Searching '{}'", term);
 
-    let query_url = &format!("http://beta.jisho.org/api/v1/search/words?keyword={}", term);
-    let mut result = reqwest::get(query_url)?;
+    let query_url = &format!("https://jisho.org/api/v1/search/words?keyword={}", term);
+    let result = reqwest::blocking::get(query_url)?;
 
     let response: Response = result.json()?;
     let response_data = response.data;
